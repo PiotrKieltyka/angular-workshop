@@ -1,5 +1,7 @@
 # AngularCoreWorkshop
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/4b844c52ff6c474fbb7b393f3805bb67)](https://app.codacy.com/app/p.kieltyka/angular-workshop?utm_source=github.com&utm_medium=referral&utm_content=PiotrKieltyka/angular-workshop&utm_campaign=Badge_Grade_Settings)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) using [Nrwl Nx](https://nrwl.io/nx).
 
 ## Nrwl Extensions for Angular (Nx)
