@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProjectsService, Project } from '@workshop/core-data';
+import { Project, ProjectsService } from '@workshop/core-data';
 
 @Component({
   selector: 'app-projects',
@@ -7,7 +7,7 @@ import { ProjectsService, Project } from '@workshop/core-data';
   styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
-
+  primaryColor = 'red';
   projects$;
   selectedProject;
 
@@ -40,7 +40,7 @@ export class ProjectsComponent implements OnInit {
       this.createProject(project);
     } else {
       this.updateProject(project);
-     }
+    }
   }
 
   getProjects() {
@@ -49,23 +49,23 @@ export class ProjectsComponent implements OnInit {
 
   createProject(project) {
     this.projectsService.create(project)
-    .subscribe(result => {
-      this.getProjects();
-      this.resetProject();
-    })
+      .subscribe(result => {
+        this.getProjects();
+        this.resetProject();
+      })
   }
 
   updateProject(project) {
     this.projectsService.update(project)
-    .subscribe(result => {
-      this.getProjects();
-      this.resetProject();
-    })
+      .subscribe(result => {
+        this.getProjects();
+        this.resetProject();
+      })
   }
 
   deleteProject(project) {
     this.projectsService.delete(project.id)
-      .subscribe( result => this.getProjects());
+      .subscribe(result => this.getProjects());
   }
 
   cancel() {
