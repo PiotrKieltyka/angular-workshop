@@ -94,9 +94,9 @@
   "projects": [
     {
       "id": "1",
-      "title": "Project HOLLA!",
+      "title": "Project HooLa!",
       "details": "This is a sample project",
-      "percentComplete": 20,
+      "percentComplete": 14,
       "approved": false,
       "startDate": null,
       "targetDate": null,

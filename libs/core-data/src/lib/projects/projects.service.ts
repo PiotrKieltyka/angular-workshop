@@ -1,5 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { of, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { NotificationsService } from './../notifications/notifications.service';
+import { Project } from './project.model';
 
 const BASE_URL = 'http://localhost:3000/';
 
@@ -35,10 +39,11 @@ export class ProjectsService {
   // ];
 
   constructor(
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private notificationsService: NotificationsService
   ) {}
 
-  getUrl () {
+  getUrl() {
     return `${BASE_URL}${this.model}`;
   }
 
@@ -47,19 +52,41 @@ export class ProjectsService {
   }
 
   all() {
-    return this.httpClient.get(this.getUrl());
+    return this.httpClient.get<Project[]>(this.getUrl());
   }
 
-  create(project) {
+  load(id) {
+    return this.httpClient.get<Project>(this.getUrlForId(id));
+  }
+
+  loadByCustomer(customerId: string) {
+    return this.httpClient.get<Project[]>(this.getUrl(), {params: {customerId}})
+      .pipe(
+        switchMap(projects => {
+          if (projects.length) {
+            return of(projects);
+          } else {
+            return throwError(`No projects exist for customer with ID ${customerId}`);
+          }
+        }),
+        catchError(error => {
+          this.notificationsService.emit(error);
+
+          return throwError(error);
+        })
+      )
+  }
+
+  create(project: Project) {
     return this.httpClient.post(this.getUrl(), project);
   }
 
-  update(project) {
+  update(project: Project) {
     return this.httpClient.patch(this.getUrlForId(project.id), project);
   }
 
-  delete(projectId) {
-    return this.httpClient.delete(this.getUrlForId(projectId));
+  delete(project: Project) {
+    return this.httpClient.delete(this.getUrlForId(project.id));
   }
 
 }

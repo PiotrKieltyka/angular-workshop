@@ -1,5 +1,17 @@
+import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { Project, ProjectsService } from '@workshop/core-data';
+import { Project, ProjectsService, Customer, NotificationsService, CustomersService, ProjectsState } from '@workshop/core-data';
+import { map } from 'rxjs/operators';
+
+const emptyProject: Project = {
+  id: null,
+  title: '',
+  details: '',
+  percentComplete: 0,
+  approved: false,
+  customerId: null
+}
 
 @Component({
   selector: 'app-projects',
@@ -8,31 +20,45 @@ import { Project, ProjectsService } from '@workshop/core-data';
 })
 export class ProjectsComponent implements OnInit {
   primaryColor = 'red';
-  projects$;
-  selectedProject;
+  projects$: Observable<Project[]>;
+  customers$: Observable<Customer[]>;
+  currentProject: Project;
 
   constructor(
-    private projectsService: ProjectsService
-  ) {}
+    private projectsService: ProjectsService,
+    private customerService: CustomersService,
+    private store: Store<ProjectsState>,
+    private ns: NotificationsService
+  ) {
+    this.projects$ = store.pipe(
+      select('projects'),
+      map((projectsState: ProjectsState) => projectsState.projects)
+    )
+  }
 
   ngOnInit() {
     this.getProjects();
-    this.resetProject();
+    this.resetCurrentProject();
   }
 
   selectProject(project) {
-    this.selectedProject = project;
+    this.currentProject = project;
   }
 
-  resetProject() {
-    const emptyProject: Project = {
-      id: null,
-      title: '',
-      details: '',
-      percentComplete: 0,
-      approved: false
-    }
-    this.selectProject(emptyProject);
+  resetCurrentProject() {    
+    this.currentProject = emptyProject;
+  }
+
+  cancel(project) {
+    this.resetCurrentProject();
+  }
+
+  getCustomers() {
+    this.customers$ = this.customerService.all();
+  }
+
+  getProjects() {
+    // this.projects$ = this.projectsService.all();
   }
 
   saveProject(project) {
@@ -43,33 +69,37 @@ export class ProjectsComponent implements OnInit {
     }
   }
 
-  getProjects() {
-    this.projects$ = this.projectsService.all();
-  }
-
   createProject(project) {
-    this.projectsService.create(project)
-      .subscribe(result => {
-        this.getProjects();
-        this.resetProject();
-      })
+    this.store.dispatch({type: 'create', payload: project});
+
+    // this.projectsService.create(project)
+    //   .subscribe(result => {
+    //     this.ns.emit('Project created!');
+    //     this.getProjects();
+    //     this.resetCurrentProject();
+    //   })
   }
 
   updateProject(project) {
-    this.projectsService.update(project)
-      .subscribe(result => {
-        this.getProjects();
-        this.resetProject();
-      })
+    this.store.dispatch({type: 'update', payload: project});
+
+    // this.projectsService.update(project)
+    //   .subscribe(result => {
+    //     this.ns.emit('Project saved!');
+    //     this.getProjects();
+    //     this.resetCurrentProject();
+    //   })
   }
 
   deleteProject(project) {
-    this.projectsService.delete(project.id)
-      .subscribe(result => this.getProjects());
-  }
-
-  cancel() {
-    this.resetProject();
+    this.store.dispatch({type: 'delte', payload: project});
+    
+    // this.projectsService.delete(project)
+    //   .subscribe(result => {
+    //     this.ns.emit('Project deleted!');
+    //     this.getProjects();
+    //     this.resetCurrentProject();
+    //   })
   }
 
 }

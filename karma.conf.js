@@ -28,7 +28,13 @@ module.exports = () => {
     colors: true,
     logLevel: constants.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
-    singleRun: true
+    browsers: ['WindowsChrome'],
+    singleRun: true,
+    customLaunchers: {
+	WindowsChrome: {
+		base: 'Chrome',
+		chromeDataDir: 'C:\\Windows\\Temp'
+		}
+	}
   };
 };
