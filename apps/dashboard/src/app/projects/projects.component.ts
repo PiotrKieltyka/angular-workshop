@@ -92,7 +92,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   deleteProject(project) {
-    this.store.dispatch({type: 'delte', payload: project});
+    this.store.dispatch({type: 'delete', payload: project});
     
     // this.projectsService.delete(project)
     //   .subscribe(result => {
