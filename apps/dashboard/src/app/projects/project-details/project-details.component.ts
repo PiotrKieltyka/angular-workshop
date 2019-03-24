@@ -1,4 +1,4 @@
-import { Project } from '@workshop/core-data';
+import { Project, Customer } from '@workshop/core-data';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
@@ -7,13 +7,14 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./project-details.component.scss']
 })
 export class ProjectDetailsComponent {
-  currentProject: Project;
-  originalTitle;
+  originalTitle: string;
+  selectedProject: Project;
   @Output() saved = new EventEmitter();
   @Output() cancelled = new EventEmitter();
 
+  @Input() customers: Customer[];
   @Input() set project(value) {
     if (value) this.originalTitle = value.title;
-    this.currentProject = Object.assign({}, value);
+    this.selectedProject = Object.assign({}, value);
   };
 }

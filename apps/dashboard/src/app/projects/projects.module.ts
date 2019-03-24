@@ -1,4 +1,5 @@
-import { FormsModule } from '@angular/forms';
+import { CoreDataModule } from '@workshop/core-data';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MaterialModule } from '@workshop/material';
@@ -16,12 +17,11 @@ import { ProjectDetailsComponent } from './project-details/project-details.compo
   ],
   imports: [
     CommonModule,
-    FormsModule,
-    MaterialModule,
     ProjectsRoutingModule,
-  ],
-  exports: [
-    ProjectsComponent
+    MaterialModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CoreDataModule,
   ]
 })
 export class ProjectsModule { }

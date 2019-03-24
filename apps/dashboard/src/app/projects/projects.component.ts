@@ -1,8 +1,7 @@
-import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { Project, ProjectsService, Customer, NotificationsService, CustomersService, ProjectsState } from '@workshop/core-data';
-import { map } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
+import { AddProject, Customer, CustomersService, DeleteProject, LoadProjects, NotificationsService, Project, ProjectsService, ProjectsState, selectAllProjects, UpdateProject } from '@workshop/core-data';
+import { Observable } from 'rxjs';
 
 const emptyProject: Project = {
   id: null,
@@ -28,16 +27,21 @@ export class ProjectsComponent implements OnInit {
     private projectsService: ProjectsService,
     private customerService: CustomersService,
     private store: Store<ProjectsState>,
-    private ns: NotificationsService
+    private ns: NotificationsService,
   ) {
     this.projects$ = store.pipe(
-      select('projects'),
-      map((projectsState: ProjectsState) => projectsState.projects)
-    )
+      select(
+        selectAllProjects
+      )
+      // select('projects'),
+      // map(data => data.entities),
+      // map(data => Object.keys(data).map(k => data[k]))
+    );
   }
 
   ngOnInit() {
     this.getProjects();
+    this.getCustomers();
     this.resetCurrentProject();
   }
 
@@ -45,7 +49,7 @@ export class ProjectsComponent implements OnInit {
     this.currentProject = project;
   }
 
-  resetCurrentProject() {    
+  resetCurrentProject() {
     this.currentProject = emptyProject;
   }
 
@@ -58,7 +62,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   getProjects() {
-    // this.projects$ = this.projectsService.all();
+    this.store.dispatch(new LoadProjects());
   }
 
   saveProject(project) {
@@ -70,7 +74,11 @@ export class ProjectsComponent implements OnInit {
   }
 
   createProject(project) {
-    this.store.dispatch({type: 'create', payload: project});
+    this.store.dispatch(new AddProject(project));
+    this.ns.emit('Project created!');
+    this.resetCurrentProject();
+
+    // this.store.dispatch({type: 'create', payload: project});
 
     // this.projectsService.create(project)
     //   .subscribe(result => {
@@ -81,7 +89,11 @@ export class ProjectsComponent implements OnInit {
   }
 
   updateProject(project) {
-    this.store.dispatch({type: 'update', payload: project});
+    this.store.dispatch(new UpdateProject(project));
+    this.ns.emit('Project saved!');
+    this.resetCurrentProject();
+
+    // this.store.dispatch({type: 'update', payload: project});
 
     // this.projectsService.update(project)
     //   .subscribe(result => {
@@ -92,8 +104,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   deleteProject(project) {
-    this.store.dispatch({type: 'delete', payload: project});
+    this.store.dispatch(new DeleteProject(project));
+    this.ns.emit('Project deleted!');
+    this.resetCurrentProject();
     
+    // this.store.dispatch({type: 'delete', payload: project});
+
     // this.projectsService.delete(project)
     //   .subscribe(result => {
     //     this.ns.emit('Project deleted!');

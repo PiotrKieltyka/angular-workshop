@@ -11,9 +11,10 @@
   <!-- PROJECT DETAILS -->
   <div class="col-50">
     <app-project-details
-      [project]="selectedProject"
+      [project]="currentProject"
+      [customers]="customers$ | async"
       (saved)="saveProject($event)"
-      (cancelled)="cancel($event)">
+      (cancelled)="resetCurrentProject($event)">
     </app-project-details>
   </div>
 </div>

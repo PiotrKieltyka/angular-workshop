@@ -4,8 +4,9 @@ import { of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { NotificationsService } from './../notifications/notifications.service';
 import { Project } from './project.model';
+import { environment } from '@env/environment';
 
-const BASE_URL = 'http://localhost:3000/';
+// const BASE_URL = 'http://localhost:3000/';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +45,7 @@ export class ProjectsService {
   ) {}
 
   getUrl() {
-    return `${BASE_URL}${this.model}`;
+    return `${environment.apiEndpoint}${this.model}`;
   }
 
   getUrlForId(id) {
