@@ -1,16 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { AddProject, Customer, CustomersService, DeleteProject, LoadProjects, NotificationsService, Project, ProjectsService, ProjectsState, selectAllProjects, UpdateProject } from '@workshop/core-data';
+import { Customer, CustomersService, NotificationsService, Project, ProjectsFacade } from '@workshop/core-data';
 import { Observable } from 'rxjs';
-
-const emptyProject: Project = {
-  id: null,
-  title: '',
-  details: '',
-  percentComplete: 0,
-  approved: false,
-  customerId: null
-}
 
 @Component({
   selector: 'app-projects',
@@ -18,25 +8,18 @@ const emptyProject: Project = {
   styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
-  primaryColor = 'red';
   projects$: Observable<Project[]>;
   customers$: Observable<Customer[]>;
+  currentProject$: Observable<Project>;
   currentProject: Project;
 
   constructor(
-    private projectsService: ProjectsService,
     private customerService: CustomersService,
-    private store: Store<ProjectsState>,
+    private facade: ProjectsFacade,
     private ns: NotificationsService,
   ) {
-    this.projects$ = store.pipe(
-      select(
-        selectAllProjects
-      )
-      // select('projects'),
-      // map(data => data.entities),
-      // map(data => Object.keys(data).map(k => data[k]))
-    );
+    this.projects$ = facade.projects$;
+    this.currentProject$ = facade.currentProject$;
   }
 
   ngOnInit() {
@@ -46,11 +29,11 @@ export class ProjectsComponent implements OnInit {
   }
 
   selectProject(project) {
-    this.currentProject = project;
+    this.facade.selectProject(project);
   }
 
   resetCurrentProject() {
-    this.currentProject = emptyProject;
+    this.facade.selectProject({id: null});
   }
 
   cancel(project) {
@@ -62,7 +45,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   getProjects() {
-    this.store.dispatch(new LoadProjects());
+    this.facade.getProjects();
   }
 
   saveProject(project) {
@@ -74,48 +57,21 @@ export class ProjectsComponent implements OnInit {
   }
 
   createProject(project) {
-    this.store.dispatch(new AddProject(project));
+    this.facade.createProject(project);
     this.ns.emit('Project created!');
     this.resetCurrentProject();
-
-    // this.store.dispatch({type: 'create', payload: project});
-
-    // this.projectsService.create(project)
-    //   .subscribe(result => {
-    //     this.ns.emit('Project created!');
-    //     this.getProjects();
-    //     this.resetCurrentProject();
-    //   })
   }
 
   updateProject(project) {
-    this.store.dispatch(new UpdateProject(project));
-    this.ns.emit('Project saved!');
+    this.facade.updateProject(project);
+    this.ns.emit('Project updated!');
     this.resetCurrentProject();
-
-    // this.store.dispatch({type: 'update', payload: project});
-
-    // this.projectsService.update(project)
-    //   .subscribe(result => {
-    //     this.ns.emit('Project saved!');
-    //     this.getProjects();
-    //     this.resetCurrentProject();
-    //   })
   }
 
   deleteProject(project) {
-    this.store.dispatch(new DeleteProject(project));
+    this.facade.deleteProject(project);
     this.ns.emit('Project deleted!');
     this.resetCurrentProject();
-    
-    // this.store.dispatch({type: 'delete', payload: project});
-
-    // this.projectsService.delete(project)
-    //   .subscribe(result => {
-    //     this.ns.emit('Project deleted!');
-    //     this.getProjects();
-    //     this.resetCurrentProject();
-    //   })
   }
 
 }

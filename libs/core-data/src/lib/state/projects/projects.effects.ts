@@ -6,8 +6,10 @@ import { Project } from './../../projects/project.model';
 import { ProjectsService } from './../../projects/projects.service';
 import { AddProject, LoadProjects, ProjectsActionTypes, ProjectsAdded, ProjectsLoaded } from './projects.actions';
 import { ProjectsState } from './projects.reducer';
-
-@Injectable({providedIn: 'root'})
+ 
+@Injectable({
+    providedIn: 'root'
+})
 export class ProjectsEffects {
 
     @Effect()
@@ -23,7 +25,7 @@ export class ProjectsEffects {
     });
 
     @Effect()
-    addProjects$ = this.dataPersistence.fetch(ProjectsActionTypes.AddProject, {
+    addProjects$ = this.dataPersistence.pessimisticUpdate(ProjectsActionTypes.AddProject, {
         run: (action: AddProject, state: ProjectsState) => {
             return this.projectsService.create(action.payload).pipe(
                 map(

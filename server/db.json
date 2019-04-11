@@ -127,6 +127,14 @@
       "details": "This is a real project",
       "percentComplete": 46,
       "approved": false
+    },
+    {
+      "id": "N6XYLQm",
+      "title": "Project number Five",
+      "details": "chunks and blobs",
+      "percentComplete": 5,
+      "approved": true,
+      "customerId": "6"
     }
   ]
 }
